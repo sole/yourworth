@@ -1,5 +1,5 @@
 (function() {
-
+	
 	var reposCount = document.querySelector('#numberOfRepositories span');
 	var forkedReposCount = document.querySelector('#numberOfForkedRepositories span');
 	var favouritesCount = document.querySelector('#numberOfFavourites span');
@@ -66,7 +66,6 @@
 		forkedReposCount.innerHTML = forks;
 		favouritesCount.innerHTML = favourites;
 		worthCount.innerHTML = totalWorth;
-
 	}
 
 	function requestUserInfo(userName, doneCallback) {
@@ -82,10 +81,25 @@
 		};
 
 		request.onload = function() {
+			var headers = parseHeaders(request.getAllResponseHeaders());
+			console.log(headers);
 			doneCallback(false, request.response);
 		};
 
 		request.send();
+	}
+
+	function parseHeaders(data) {
+		var lines = data.split('\n');
+		var headers = {};
+		lines.forEach(function(line) {
+			line = line.trim();
+			if(line.length > 0) {
+				var pairs = line.split(': ');
+				headers[pairs[0]] = pairs[1];
+			}
+		});
+		return headers;
 	}
 
 }).call(this);

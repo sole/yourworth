@@ -61,30 +61,47 @@
 		var forks = info.numberOfForkedRepos;
 		var favourites = info.numberOfFavourites;
 		var totalWorth = magicFormula(repos, forks, favourites);
+		var easing = TWEEN.Easing.Exponential.InOut;
+		var animLength = 3000;
+
 		var startValues = {
 			repos: 0,
 			forks: 0,
-			favourites: 0,
-			totalWorth: 0
+			//favourites: 0,
+			//totalWorth: 0
 		};
 
 		var endValues = {
 			repos: repos,
 			forks: forks,
-			favourites: favourites,
-			totalWorth: totalWorth
+			//favourites: favourites,
+			//totalWorth: totalWorth
 		};
 
 		var tween = new TWEEN.Tween(startValues)
-			.to(endValues, 20000)
-			.easing(TWEEN.Easing.Exponential.InOut)
+			.to(endValues, animLength)
+			.easing(easing)
 			.onUpdate(function() {
 				reposCount.innerHTML = r(this.repos);
 				forkedReposCount.innerHTML = r(this.forks);
-				favouritesCount.innerHTML = r(this.favourites);
-				worthCount.innerHTML = r(this.totalWorth);
+				//favouritesCount.innerHTML = r(this.favourites);
+				//worthCount.innerHTML = r(this.totalWorth);
 			})
-			.start();
+			.start()
+			.chain(new TWEEN.Tween({ favourites: 0 })
+				.to({ favourites: favourites }, animLength * 0.5)
+				.easing(easing)
+				.onUpdate(function() {
+					favouritesCount.innerHTML = r(this.favourites);
+				})
+				.chain(new TWEEN.Tween({ totalWorth: 0 })
+					.to({ totalWorth: totalWorth }, animLength * 0.5)
+					.easing(easing)
+					.onUpdate(function() {
+						worthCount.innerHTML = r(this.totalWorth);
+					})
+				)
+			);
 
 	}
 

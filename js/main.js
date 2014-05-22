@@ -9,6 +9,8 @@
 
 	form.addEventListener('submit', onFormSubmit, false);
 
+	requestAnimationFrame(animate);
+
 	function onFormSubmit(e) {
 		e.preventDefault();
 
@@ -54,15 +56,42 @@
 	}
 
 	function displayResults(info) {
+
 		var repos = info.numberOfRepos;
 		var forks = info.numberOfForkedRepos;
 		var favourites = info.numberOfFavourites;
 		var totalWorth = magicFormula(repos, forks, favourites);
+		var startValues = {
+			repos: 0,
+			forks: 0,
+			favourites: 0,
+			totalWorth: 0
+		};
 
-		reposCount.innerHTML = repos;
-		forkedReposCount.innerHTML = forks;
-		favouritesCount.innerHTML = favourites;
-		worthCount.innerHTML = totalWorth;
+		var endValues = {
+			repos: repos,
+			forks: forks,
+			favourites: favourites,
+			totalWorth: totalWorth
+		};
+
+		var tween = new TWEEN.Tween(startValues)
+			.to(endValues, 20000)
+			.easing(TWEEN.Easing.Exponential.InOut)
+			.onUpdate(function() {
+				reposCount.innerHTML = r(this.repos);
+				forkedReposCount.innerHTML = r(this.forks);
+				favouritesCount.innerHTML = r(this.favourites);
+				worthCount.innerHTML = r(this.totalWorth);
+			})
+			.start();
+
+	}
+
+
+	// cryptic function names for the win
+	function r(v) {
+		return Math.round(v);
 	}
 
 
@@ -145,6 +174,12 @@
 			}
 		});
 		return headers;
+	}
+
+
+	function animate(time) {
+		requestAnimationFrame(animate);
+		TWEEN.update(time);
 	}
 
 }).call(this);

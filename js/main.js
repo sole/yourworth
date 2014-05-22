@@ -1,9 +1,9 @@
 (function() {
 	
-	var reposCount = document.querySelector('#numberOfRepositories span');
-	var forkedReposCount = document.querySelector('#numberOfForkedRepositories span');
-	var favouritesCount = document.querySelector('#numberOfFavourites span');
-	var worthCount = document.querySelector('#totalWorth span');
+	var reposCount = document.querySelector('#numberOfRepositories');
+	var forkedReposCount = document.querySelector('#numberOfForkedRepositories');
+	var favouritesCount = document.querySelector('#numberOfFavourites');
+	var worthCount = document.querySelector('#totalWorth');
 	var form = document.querySelector('form');
 	var usernameInput = document.getElementById('username');
 
@@ -61,8 +61,8 @@
 		var forks = info.numberOfForkedRepos;
 		var favourites = info.numberOfFavourites;
 		var totalWorth = magicFormula(repos, forks, favourites);
-		var easing = TWEEN.Easing.Exponential.InOut;
-		var animLength = 3000;
+		var easing = TWEEN.Easing.Exponential.In;
+		var animLength = 900;
 
 		var toAnimate = [
 			[ repos, reposCount ],
@@ -76,11 +76,16 @@
 			var startObject = { value: 0 },
 				endObject = { value: pair[0] },
 				element = pair[1],
+				numberElement = element.querySelector('span'),
 				tween = new TWEEN.Tween(startObject)
 					.to(endObject, animLength)
+					.delay(animLength * 0.1)
 					.easing(easing)
+					.onStart(function() {
+						element.hidden = false;
+					})
 					.onUpdate(function() {
-						element.innerHTML = r(this.value);
+						numberElement.innerHTML = r(this.value);
 					});
 			return tween;
 

@@ -15,14 +15,11 @@
 		var username = usernameInput.value;
 		
 		if(username !== '') {
-			//requestUserInfo(username, onInfoLoaded);
 			loadUserInfo(username, onInfoLoaded);
 		}
 	}
 
 	function onInfoLoaded(error, data) {
-
-		console.log('onInfoLoaded');
 
 		if(error) {
 			console.error('nope', error);
@@ -47,7 +44,6 @@
 			}
 
 			numberOfFavourites += repo.stargazers_count;
-
 		});
 
 		return ({
@@ -69,15 +65,6 @@
 		worthCount.innerHTML = totalWorth;
 	}
 
-	// First request
-	// gets some repositories + link to next
-	// add repos to list
-	// how do we know we need to load more data?
-	// if next page == this page
-	// then resolve
-	// else load next
-	// nextURL
-	
 
 	function loadUserInfo(userName, onInfoLoaded) {
 		var apiURL = 'https://api.github.com/users/' + userName + '/repos';
@@ -87,14 +74,8 @@
 			if(err) {
 				onInfoLoaded(err, repositories);
 			} else {
-				// repos and headers
-				// repositories.concat(repos);
 				repositories = repositories.concat(data.repositories);
-				console.log('have', repositories.length, 'repos');
 				if(data.nextURL != data.currentURL) {
-					// if next != current
-					// makeRequest(nextURL, onRequest);
-					console.log('should make another request', data.nextURL);
 					makeRequest(data.nextURL, onRequest);
 				} else {
 					onInfoLoaded(false, repositories);
@@ -119,10 +100,7 @@
 			var headers = parseHeaders(request.getAllResponseHeaders());
 			var nextURL = apiURL;
 
-			console.log(headers);
-
 			var links = parseLinks(headers.Link);
-			console.log(links);
 			if(links.next) {
 				nextURL = links.next;
 			}
@@ -150,33 +128,11 @@
 			if(matches.length) {
 				links[matches[2]] = matches[1];
 			}
-			// console.log(matches);
 		});
 
 		return links;
 	}
 
-
-	function requestUserInfo(userName, doneCallback) {
-
-		var apiURL = 'https://api.github.com/users/' + userName + '/repos';
-		var request = new XMLHttpRequest();
-
-		request.open('get', apiURL, true);
-		request.responseType = 'json';
-
-		request.onerror = function(e) {
-			doneCallback('Sad times, cannot get the info');
-		};
-
-		request.onload = function() {
-			var headers = parseHeaders(request.getAllResponseHeaders());
-			console.log(headers);
-			doneCallback(false, request.response);
-		};
-
-		request.send();
-	}
 
 	function parseHeaders(data) {
 		var lines = data.split('\n');

@@ -85,7 +85,7 @@
 
 		makeRequest(apiURL, function onRequest(err, data) {
 			if(err) {
-				onInfoLoaded(repositories);
+				onInfoLoaded(err, repositories);
 			} else {
 				// repos and headers
 				// repositories.concat(repos);
@@ -97,7 +97,7 @@
 					console.log('should make another request', data.nextURL);
 					makeRequest(data.nextURL, onRequest);
 				} else {
-					onInfoLoaded(repositories);
+					onInfoLoaded(false, repositories);
 				}
 			}
 		});

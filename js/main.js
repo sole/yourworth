@@ -64,44 +64,35 @@
 		var easing = TWEEN.Easing.Exponential.InOut;
 		var animLength = 3000;
 
-		var startValues = {
-			repos: 0,
-			forks: 0,
-			//favourites: 0,
-			//totalWorth: 0
-		};
+		var toAnimate = [
+			[ repos, reposCount ],
+			[ forks, forkedReposCount ],
+			[ favourites, favouritesCount ],
+			[ totalWorth, worthCount ]
+		];
 
-		var endValues = {
-			repos: repos,
-			forks: forks,
-			//favourites: favourites,
-			//totalWorth: totalWorth
-		};
+		var tweens = toAnimate.map(function(pair) {
 
-		var tween = new TWEEN.Tween(startValues)
-			.to(endValues, animLength)
-			.easing(easing)
-			.onUpdate(function() {
-				reposCount.innerHTML = r(this.repos);
-				forkedReposCount.innerHTML = r(this.forks);
-				//favouritesCount.innerHTML = r(this.favourites);
-				//worthCount.innerHTML = r(this.totalWorth);
-			})
-			.start()
-			.chain(new TWEEN.Tween({ favourites: 0 })
-				.to({ favourites: favourites }, animLength * 0.5)
-				.easing(easing)
-				.onUpdate(function() {
-					favouritesCount.innerHTML = r(this.favourites);
-				})
-				.chain(new TWEEN.Tween({ totalWorth: 0 })
-					.to({ totalWorth: totalWorth }, animLength * 0.5)
+			var startObject = { value: 0 },
+				endObject = { value: pair[0] },
+				element = pair[1],
+				tween = new TWEEN.Tween(startObject)
+					.to(endObject, animLength)
 					.easing(easing)
 					.onUpdate(function() {
-						worthCount.innerHTML = r(this.totalWorth);
-					})
-				)
-			);
+						element.innerHTML = r(this.value);
+					});
+			return tween;
+
+		});
+
+		tweens.forEach(function(t, index) {
+			if(index > 0) {
+				tweens[index - 1].chain(t);
+			}
+		});
+
+		tweens[0].start();
 
 	}
 

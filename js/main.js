@@ -9,7 +9,29 @@
 
 	form.addEventListener('submit', onFormSubmit, false);
 
+	if(window.location.hash) {
+		loadFromHash();
+	}
+
 	requestAnimationFrame(animate);
+
+
+	// ---------------------
+	
+
+	function loadFromHash() {
+		var hash = window.location.hash.substr(1);
+		if(hash.length > 0) {
+			console.log('user is', hash);
+			usernameInput.value = hash;
+			loadUserInfo(hash, onInfoLoaded);
+		}
+	}
+
+	function updateHash() {
+		window.location.hash = usernameInput.value;
+	}
+
 
 	function onFormSubmit(e) {
 		e.preventDefault();
@@ -17,6 +39,7 @@
 		var username = usernameInput.value;
 		
 		if(username !== '') {
+			updateHash();
 			loadUserInfo(username, onInfoLoaded);
 		}
 	}

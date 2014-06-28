@@ -137,14 +137,18 @@
 		request.onerror = function(e) {
 			doneCallback('Sad times, cannot get the info');
 		};
-
+console.log('making request', apiURL);
 		request.onload = function() {
 			var headers = parseHeaders(request.getAllResponseHeaders());
 			var nextURL = apiURL;
 
-			var links = parseLinks(headers.Link);
-			if(links.next) {
-				nextURL = links.next;
+			// Some users do not have MORE repos. So they don't have a Link property
+			// in their headers. Bah, losers.
+			if(headers.Link) {
+				var links = parseLinks(headers.Link);
+				if(links.next) {
+					nextURL = links.next;
+				}
 			}
 
 			doneCallback(false, {
